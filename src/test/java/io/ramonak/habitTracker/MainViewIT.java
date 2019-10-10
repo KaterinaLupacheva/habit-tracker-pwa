@@ -1,4 +1,4 @@
-package io.ramonak.spring;
+package io.ramonak.habitTracker;
 
 import org.junit.Assert;
 import org.junit.Test;
