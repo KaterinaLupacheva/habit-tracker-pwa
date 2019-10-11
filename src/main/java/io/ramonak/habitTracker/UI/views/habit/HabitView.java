@@ -12,6 +12,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import io.ramonak.habitTracker.MainView;
 import io.ramonak.habitTracker.UI.DTO.AchievementDTO;
 import io.ramonak.habitTracker.UI.DTO.HabitDTO;
@@ -26,6 +27,9 @@ import io.ramonak.habitTracker.service.AchievementService;
 import io.ramonak.habitTracker.service.HabitService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -46,6 +50,7 @@ public class HabitView extends VerticalLayout {
     private LocalDate today;
     private boolean isIconClicked;
     private final Button addHabit;
+    private String userEmail = "";
 
     public HabitView(HabitService habitService, AchievementService achievementService) {
         setSizeFull();
@@ -53,19 +58,21 @@ public class HabitView extends VerticalLayout {
         this.achievementService = achievementService;
         habitForm = new HabitForm(this, achievementService);
         habitForm.setVisible(false);
-//        Span username = new Span();
-//        username.setText(securityService.getUsername());
+        Span username = new Span();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            username.setText(authentication.getName());
+            userEmail = authentication.getName();
+        }
         Button logout = new Button("Logout");
-//        logout.addClickListener(e -> {
-//            ResponseEntity<HttpStatus> status = securityService.logout();
-//            if (status.getStatusCode().is2xxSuccessful()) {
-//                UI.getCurrent().navigate("");
-//            }
-//                });
-//        HorizontalLayout user = new HorizontalLayout(username, logout);
-//        user.setWidthFull();
-//        user.setJustifyContentMode(JustifyContentMode.END);
-//        user.setVerticalComponentAlignment(Alignment.CENTER, username, logout);
+        logout.addClickListener(e -> {
+            VaadinSession.getCurrent().getSession().invalidate();
+            UI.getCurrent().getPage().executeJs("window.location.href=''");
+                });
+        HorizontalLayout user = new HorizontalLayout(username, logout);
+        user.setWidthFull();
+        user.setJustifyContentMode(JustifyContentMode.END);
+        user.setVerticalComponentAlignment(Alignment.CENTER, username, logout);
         grid = new Grid<>(HabitForGrid.class);
         grid.addThemeNames("column-borders", "wrap-cell-content");
         gridHeader = new GridHeader();
@@ -112,7 +119,7 @@ public class HabitView extends VerticalLayout {
         weekNavigationButtons.setWidthFull();
         nextWeek.getStyle().set("margin-left", "auto");
 
-        add(weekNavigationButtons, grid, addHabit, habitForm);
+        add(user, weekNavigationButtons, grid, addHabit, habitForm);
     }
 
     private void updateGrid(Button addHabit) {
@@ -230,7 +237,7 @@ public class HabitView extends VerticalLayout {
                 }
                 achievementService.updateAchievement(item.getAchievementMonday().getId(),
                         item.getHabitId(),
-                        new Achievement(item.getAchievementMonday()));
+                        new Achievement(item.getAchievementMonday()), userEmail);
                 updateList(today);
             } else {
                 isIconClicked = true;
@@ -252,7 +259,7 @@ public class HabitView extends VerticalLayout {
                 }
                 achievementService.updateAchievement(item.getAchievementTuesday().getId(),
                         item.getHabitId(),
-                        new Achievement(item.getAchievementTuesday()));
+                        new Achievement(item.getAchievementTuesday()), userEmail);
                 updateList(today);
             } else {
                 isIconClicked = true;
@@ -274,7 +281,7 @@ public class HabitView extends VerticalLayout {
                 }
                 achievementService.updateAchievement(item.getAchievementWednesday().getId(),
                         item.getHabitId(),
-                        new Achievement(item.getAchievementWednesday()));
+                        new Achievement(item.getAchievementWednesday()), userEmail);
                 updateList(today);
             } else {
                 isIconClicked = true;
@@ -296,7 +303,7 @@ public class HabitView extends VerticalLayout {
                 }
                 achievementService.updateAchievement(item.getAchievementThursday().getId(),
                         item.getHabitId(),
-                        new Achievement(item.getAchievementThursday()));
+                        new Achievement(item.getAchievementThursday()), userEmail);
                 updateList(today);
             } else {
                 isIconClicked = true;
@@ -318,7 +325,7 @@ public class HabitView extends VerticalLayout {
                 }
                 achievementService.updateAchievement(item.getAchievementFriday().getId(),
                         item.getHabitId(),
-                        new Achievement(item.getAchievementFriday()));
+                        new Achievement(item.getAchievementFriday()), userEmail);
                 updateList(today);
             } else {
                 isIconClicked = true;
@@ -340,7 +347,7 @@ public class HabitView extends VerticalLayout {
                 }
                 achievementService.updateAchievement(item.getAchievementSaturday().getId(),
                         item.getHabitId(),
-                        new Achievement(item.getAchievementSaturday()));
+                        new Achievement(item.getAchievementSaturday()), userEmail);
                 updateList(today);
             } else {
                 isIconClicked = true;
@@ -362,7 +369,7 @@ public class HabitView extends VerticalLayout {
                 }
                 achievementService.updateAchievement(item.getAchievementSunday().getId(),
                         item.getHabitId(),
-                        new Achievement(item.getAchievementSunday()));
+                        new Achievement(item.getAchievementSunday()), userEmail);
                 updateList(today);
             } else {
                 isIconClicked = true;
@@ -399,7 +406,7 @@ public class HabitView extends VerticalLayout {
     private List<Achievement> getAchievementsForWeek(LocalDate today) {
         List<LocalDate> week = DateUtils.createWeek(today);
         return achievementService
-                .getAllBetweenDates(week.get(0), week.get(week.size() - 1));
+                .getAllBetweenDates(week.get(0), week.get(week.size() - 1), userEmail);
     }
 
     private Collection<List<Achievement>> findAchievementsForHabit(List<Achievement> achievementsForWeek) {
@@ -418,5 +425,9 @@ public class HabitView extends VerticalLayout {
 
     public Button getAddHabit() {
         return addHabit;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
     }
 }

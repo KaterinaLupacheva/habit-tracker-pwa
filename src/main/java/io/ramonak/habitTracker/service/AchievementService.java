@@ -28,7 +28,8 @@ public class AchievementService {
 
     public Achievement updateAchievement(Long achievementId,
                                          Integer habitId,
-                                         Achievement updatedAchievement) {
+                                         Achievement updatedAchievement,
+                                         String userEmail) {
         try {
             Achievement achievement = achievementRepository.findById(achievementId)
                     .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Achievement " + achievementId + " not found"));
@@ -37,7 +38,7 @@ public class AchievementService {
             achievement.setStatus(updatedAchievement.getStatus());
             achievement.setDate(updatedAchievement.getDate());
             achievement.setHabit(habit);
-//            achievement.setUser(userRepository.findByUsername(principal.getName()));
+            achievement.setUser(userRepository.findByEmailIgnoreCase(userEmail));
             return achievementRepository.save(achievement);
         } catch (ResponseStatusException ex) {
             ex.getStatus();
@@ -46,15 +47,15 @@ public class AchievementService {
         }
     }
 
-    public List<Achievement> getAllBetweenDates(LocalDate start, LocalDate end) {
+    public List<Achievement> getAllBetweenDates(LocalDate start, LocalDate end, String userEmail) {
         return achievementRepository.findAllByDateBetweenAndUserIs(start, end,
-                userRepository.findByUsername("NAme"));
+                userRepository.findByEmailIgnoreCase(userEmail));
     }
 
-    public Achievement saveAchievementToHabit(Integer habitId, Achievement achievement) {
+    public Achievement saveAchievementToHabit(Integer habitId, Achievement achievement, String userEmail) {
         return habitRepository.findById(habitId).map(habit -> {
             achievement.setHabit(habit);
-//            achievement.setUser(userRepository.findByUsername(principal.getName()));
+            achievement.setUser(userRepository.findByEmailIgnoreCase(userEmail));
             return achievementRepository.save(achievement);
         }).orElseThrow(() -> new ResponseStatusException
                 (HttpStatus.NOT_FOUND, "Habit " + habitId + " not found"));

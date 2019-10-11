@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Data
-@EqualsAndHashCode(exclude = {"id", "roles"})
+@EqualsAndHashCode(exclude = "id")
 @Entity
 @Table(name = "UserInfo")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -31,14 +32,14 @@ public class User implements Serializable {
     @NotNull
     private String username;
 
-    @Column
+    @Column(unique = true)
     @Email
     @NotNull
     private String email;
 
     @Column
     @NotNull
-    private String password;
+    private String passwordHash;
 
     @PrePersist
     @PreUpdate
@@ -46,15 +47,19 @@ public class User implements Serializable {
         this.email = email == null ? null : email.toLowerCase();
     }
 
-    @ManyToMany
-    private List<Role> roles = new ArrayList<>();
+    @NotBlank
+    private String role;
 
-    public User(String username, String email, String password, List<Role> roles) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.roles = roles;
-    }
+    private boolean locked = false;
+//    @ManyToMany
+//    private List<Role> roles = new ArrayList<>();
+
+//    public User(String username, String email, String password, List<Role> roles) {
+//        this.username = username;
+//        this.email = email;
+//        this.password = password;
+//        this.roles = roles;
+//    }
 
     //    public void addRole(Role role) {
 //        this.roles.add(role);

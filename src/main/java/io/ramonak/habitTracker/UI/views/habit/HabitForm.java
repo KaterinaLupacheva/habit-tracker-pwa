@@ -33,7 +33,6 @@ class HabitForm extends VerticalLayout {
 
     private final Binder<Habit> binder;
     private final HabitView habitView;
-//    private HabitDTO habitDTO;
     private Habit habit;
     private final AchievementService achievementService;
     private Map<LocalDate, Integer> achievements;
@@ -120,7 +119,7 @@ class HabitForm extends VerticalLayout {
                     }
                 }
             }
-            achievementService.saveAchievementToHabit(this.habit.getId(), achievement);
+            achievementService.saveAchievementToHabit(this.habit.getId(), achievement, habitView.getUserEmail());
         }
         habitView.updateList(habitView.getToday());
         setVisible(false);

@@ -10,22 +10,19 @@ import java.io.Serializable;
 
 @NoArgsConstructor
 @Data
-@EqualsAndHashCode(exclude = {"id"})
-@Entity
+@EqualsAndHashCode
+//@Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Role implements Serializable {
 
     private static final long serialVersionUID = 3675585703169904531L;
+    public static final String ADMIN ="admin";
+    public static final String USER = "user";
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    private Integer id;
-
-    @Column
-    private String name;
-
-    public Role(String name) {
-        this.name = name;
+    public static String[] getAllRoles() {
+        return new String[] {
+                ADMIN, USER
+        };
     }
+
 }
