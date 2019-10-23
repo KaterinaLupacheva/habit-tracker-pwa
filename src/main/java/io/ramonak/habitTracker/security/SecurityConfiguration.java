@@ -48,16 +48,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public CurrentUser currentUser(UserRepository userRepository) {
-        final String username = SecurityUtils.getUsername();
-        User user =
-                username != null ? userRepository.findByEmailIgnoreCase(username) :
-                        null;
-        return () -> user;
-    }
-
     /**
      * Registers our UserDetailsService and the password encoder to be used on login attempts.
      */

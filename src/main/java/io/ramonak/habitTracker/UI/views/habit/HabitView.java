@@ -23,6 +23,7 @@ import io.ramonak.habitTracker.UI.views.utils.DateUtils;
 import io.ramonak.habitTracker.entity.Achievement;
 import io.ramonak.habitTracker.entity.Habit;
 import io.ramonak.habitTracker.entity.HabitForGrid;
+import io.ramonak.habitTracker.repository.UserRepository;
 import io.ramonak.habitTracker.service.AchievementService;
 import io.ramonak.habitTracker.service.HabitService;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -52,7 +54,7 @@ public class HabitView extends VerticalLayout {
     private final Button addHabit;
     private String userEmail = "";
 
-    public HabitView(HabitService habitService, AchievementService achievementService) {
+    public HabitView(HabitService habitService, AchievementService achievementService, UserRepository userRepository) {
         setSizeFull();
         this.habitService = habitService;
         this.achievementService = achievementService;
@@ -61,7 +63,7 @@ public class HabitView extends VerticalLayout {
         Span username = new Span();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            username.setText(authentication.getName());
+            username.setText(userRepository.findByEmailIgnoreCase(authentication.getName()).getUsername());
             userEmail = authentication.getName();
         }
         Button logout = new Button("Logout");
