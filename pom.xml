@@ -253,7 +253,7 @@
                                 <include>target/habit-tracker-2.0-SNAPSHOT.jar</include>
                             </includes>
                             <processTypes>
-                                <web>java -jar target/habit-tracker-2.0-SNAPSHOT.jar</web>
+                                <web>java $JAVA_OPTS -cp target/classes:target/dependency/* Main</web>
                             </processTypes>
                         </configuration>
                     </plugin>
