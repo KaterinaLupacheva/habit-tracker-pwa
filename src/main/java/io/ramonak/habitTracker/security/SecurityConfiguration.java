@@ -41,14 +41,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * The password encoder to use when encrypting passwords.
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    /**
      * Registers our UserDetailsService and the password encoder to be used on login attempts.
      */
     @Override
