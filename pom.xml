@@ -237,11 +237,20 @@
                         <executions>
                             <execution>
                                 <goals>
-                                    <goal>prepare-frontend</goal>
-                                    <goal>build-frontend</goal>
+                                    <goal>copy-production-files</goal>
+                                    <goal>package-for-production</goal>
+<!--                                    <goal>prepare-frontend</goal>-->
+<!--                                    <goal>build-frontend</goal>-->
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <jvmArguments>-Dvaadin.productionMode</jvmArguments>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
