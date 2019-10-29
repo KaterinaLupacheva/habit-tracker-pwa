@@ -20,7 +20,6 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-//    private final PasswordEncoder passwordEncoder;
 
     public User registerNewUser(User user) {
         if (userExists(user.getEmail())) {
