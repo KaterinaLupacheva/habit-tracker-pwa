@@ -5,6 +5,7 @@ import io.ramonak.habitTracker.entity.Role;
 import io.ramonak.habitTracker.entity.User;
 import io.ramonak.habitTracker.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,10 @@ import javax.servlet.http.HttpServletRequest;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
 
     public User registerNewUser(User user) {
         if (userExists(user.getEmail())) {
